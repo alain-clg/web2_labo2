@@ -7,6 +7,7 @@ app.use(expressLayouts);
 
 // mes routes...
 app.use('/', require('./routes/index'));
+app.use('/usagers', require('./routes/usagers'));
 
 // mes vues....
 app.set('views', './views');
