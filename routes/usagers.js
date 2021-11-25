@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const Usagers = require('../modeles/usagers');
 
 router.get('/login', (requete, reponse) => reponse.render('login'));
 router.get('/register', (requete, reponse) => reponse.render('register'));
@@ -32,10 +34,52 @@ router.post('/register', (requete, reponse) => {
     }
     if (erreurs.length > 0) {
         reponse.render('register', {
-            erreurs
+            erreurs,
+            nom,
+            email,
+            password,
+            password2
         });
     } else {
-        reponse.send('tout est beau dans le post du register');
+        Usagers.findOne({ email: email }).then(usager => {
+            if (usager) {
+                erreurs.push({ msg: 'Ce courriel existe deja'});
+                reponse.render('register', {
+                    erreurs,
+                    nom,
+                    email,
+                    password,
+                    password2
+                });                
+            } else {
+                const nouveauUsager = new Usagers({
+                    nom,
+                    email,
+                    password
+                });
+                bcrypt.genSalt(10, (err, salt) => {
+                    if (err) throw err;
+                    bcrypt.hash(password, salt, (err, hache) => {
+                        if (err) throw err;
+                        // nouveau mot de passe est dans le hache
+                        nouveauUsager.password = hache;
+                        nouveauUsager.save()
+                        .then(user => {
+                            console.log(nouveauUsager);
+                            // requete.flash(
+                            //     'success_msg', 'Vous etes dans la BD et pouvez vous connecter'
+                            // );
+                            reponse.redirect('/usagers/login');
+
+                        })
+                        .catch(err => console.log(err));
+
+                    });
+                });
+            }
+        })
+        // faire un hachage du mot de passe
+
     }
 
     
