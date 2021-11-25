@@ -5,6 +5,9 @@ const PORT = process.env.PORT || 8000;
 const expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
 
+// format des post
+app.use(express.urlencoded({ extended: false }));
+
 // mes routes...
 app.use('/', require('./routes/index'));
 app.use('/usagers', require('./routes/usagers'));
@@ -17,6 +20,8 @@ app.set('view engine', 'ejs');
 // mes fichiers statiques
 app.use('/css', express.static('./css'));
 app.use('/images', express.static('./images'));
+
+
 
 // connexion BD
 mongoose.connect('mongodb://localhost/labo02');
