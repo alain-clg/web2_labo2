@@ -2,11 +2,37 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 8000;
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+require('./config/passport')(passport);
 const expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
 
+
 // format des post
 app.use(express.urlencoded({ extended: false }));
+
+// les sessions express
+app.use(session({
+    secret: 'trucmachinBidule',
+    resave: true,
+    saveUninitialized: true
+}));
+
+// pour passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// connexion a flash
+app.use(flash());
+
+// nos variables globales
+app.use((requete, reponse, next) => {
+    reponse.locals.succes_msg = requete.flash('succes_msg');
+    reponse.locals.erreur_msg = requete.flash('erreur_msg');
+    next();
+});
 
 // mes routes...
 app.use('/', require('./routes/index'));

@@ -1,23 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 const Usagers = require('../modeles/usagers');
 
 router.get('/login', (requete, reponse) => reponse.render('login'));
 router.get('/register', (requete, reponse) => reponse.render('register'));
 
-router.post('/login', (requete, reponse) => {
-    // console.log(requete.body);
-    const { email, password } = requete.body;
-    let erreurs = [];
-    // console.log(email, password);
-
-    if (!email || !password) {
-        erreurs.push( { msg: 'Remplir tous les champs' } );
-    }
-
-    reponse.send('salut le post a fonctionne');
+router.post('/login', (requete, reponse, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/contenu',
+        failureRedirect: '/usagers/login',
+        failureFlash: true
+    })(requete, reponse, next);
 });
+
 router.post('/register', (requete, reponse) => {
     // console.log(requete.body);
     const { nom, email, password, password2 } = requete.body;
@@ -65,21 +62,17 @@ router.post('/register', (requete, reponse) => {
                         nouveauUsager.password = hache;
                         nouveauUsager.save()
                         .then(user => {
-                            console.log(nouveauUsager);
-                            // requete.flash(
-                            //     'success_msg', 'Vous etes dans la BD et pouvez vous connecter'
-                            // );
+                            // console.log(nouveauUsager);
+                            requete.flash(
+                                'succes_msg', 'Vous etes dans la BD et pouvez vous connecter'
+                            );
                             reponse.redirect('/usagers/login');
-
                         })
                         .catch(err => console.log(err));
-
                     });
                 });
             }
         })
-        // faire un hachage du mot de passe
-
     }
 
     
