@@ -11,7 +11,7 @@ module.exports = function(passport) {
                 email: email
             }).then(usager=>{
                 if (!usager) {
-                    return done(null, false, { message: "Ce courriel n'existe pas"});
+                    return done( null, false, { message: "Ce courriel n'existe pas"});
                 }
                 bcrypt.compare(password, usager.password, (err, isMatch) => {
                     if (err) throw err;

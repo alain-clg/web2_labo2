@@ -5,11 +5,18 @@ const passport = require('passport');
 const Usagers = require('../modeles/usagers');
 
 router.get('/login', (requete, reponse) => reponse.render('login'));
+router.get('/logout', (requete, reponse) => {
+    requete.logout();
+    requete.flash('succes_msg', 'Deconnexion reussie');
+    reponse.redirect('/usagers/login');
+});
+
 router.get('/register', (requete, reponse) => reponse.render('register'));
 
 router.post('/login', (requete, reponse, next) => {
     passport.authenticate('local', {
         successRedirect: '/contenu',
+        badRequestMessage: 'Remplir tous les champs',
         failureRedirect: '/usagers/login',
         failureFlash: true
     })(requete, reponse, next);
@@ -64,7 +71,7 @@ router.post('/register', (requete, reponse) => {
                         .then(user => {
                             // console.log(nouveauUsager);
                             requete.flash(
-                                'succes_msg', 'Vous etes dans la BD et pouvez vous connecter'
+                                'succes_msg', 'Ce email vient d\'être inséré dans la BD et vous pouvez vous connecter'
                             );
                             reponse.redirect('/usagers/login');
                         })

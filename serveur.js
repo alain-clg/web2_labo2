@@ -9,7 +9,6 @@ require('./config/passport')(passport);
 const expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
 
-
 // format des post
 app.use(express.urlencoded({ extended: false }));
 
@@ -31,6 +30,7 @@ app.use(flash());
 app.use((requete, reponse, next) => {
     reponse.locals.succes_msg = requete.flash('succes_msg');
     reponse.locals.erreur_msg = requete.flash('erreur_msg');
+    reponse.locals.erreur_passeport = requete.flash('error');
     next();
 });
 
@@ -44,10 +44,9 @@ app.set('layout', 'layout');
 app.set('view engine', 'ejs');
 
 // mes fichiers statiques
-app.use('/css', express.static('./css'));
-app.use('/images', express.static('./images'));
-
-
+app.use('/css', express.static('./statique/css'));
+app.use('/images', express.static('./statique/images'));
+app.use('/javascript', express.static('./statique/javascript'));
 
 // connexion BD
 mongoose.connect('mongodb://localhost/labo02');
