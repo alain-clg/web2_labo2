@@ -49,8 +49,8 @@ app.use('/images', express.static('./statique/images'));
 app.use('/javascript', express.static('./statique/javascript'));
 
 // connexion BD
-mongoose.connect('mongodb://localhost/labo02');
-// mongoose.connect('mongodb+srv://test:password@cluster0.yml6m.mongodb.net/SERVICES_TP1?retryWrites=true&w=majority');
+// mongoose.connect('mongodb://localhost/labo02');
+mongoose.connect('mongodb+srv://test:test@cluster0.yml6m.mongodb.net/SERVICES_TP1?retryWrites=true&w=majority');
 
 let db = mongoose.connection;
 db.on('error', (err) => { console.error('erreur de BD:', err)});
